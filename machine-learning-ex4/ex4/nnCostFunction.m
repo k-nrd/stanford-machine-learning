@@ -62,26 +62,10 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% -------------------------------------------------------------
-
+h = feedforward(Theta1, Theta2, X);
+size(h)
+J = (-y' * log(h) - (1 - y)' * log(1 - h)) / m;
+grad = ((h - y)' * X) / m;
 % =========================================================================
 
 % Unroll gradients
