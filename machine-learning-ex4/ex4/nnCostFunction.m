@@ -24,7 +24,7 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Setup some useful variables
 m = size(X, 1);
-         
+
 % You need to return the following variables correctly 
 J = 0;
 Theta1_grad = zeros(size(Theta1));
@@ -62,14 +62,34 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-h = feedforward(Theta1, Theta2, X);
-size(h)
-J = (-y' * log(h) - (1 - y)' * log(1 - h)) / m;
-grad = ((h - y)' * X) / m;
+% forward propagate
+[a3 a2 a1] = forwardprop(Theta1, Theta2, X);
+
+% make dummy y and unroll variables into vectors
+y = dummyVar(y);
+y_vec = y(:);
+h_vec = a3(:);
+t1_vec = Theta1(:, 2:end)(:);
+t2_vec = Theta2(:, 2:end)(:);
+
+% calculate cost J
+J = (-y_vec' * log(h_vec) - (1 - y_vec)' * log(1 - h_vec)) / m;
+
+% regularized cost
+if (lambda > 0)
+    multiplier = lambda / (2 * m);
+    summation = (t1_vec' * t1_vec) + (t2_vec' * t2_vec);
+    J = J + (multiplier * summation);
+endif
+
+[Theta1_grad Theta2_grad] = backprop(y, a3, a2, a1, Theta1, Theta2);
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + ((lambda / m) * Theta1(:, 2:end));
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + ((lambda / m) * Theta2(:, 2:end));
+
 % =========================================================================
 
 % Unroll gradients
-grad = [Theta1_grad(:) ; Theta2_grad(:)];
+grad = [Theta1_grad(:); Theta2_grad(:)];
 
 
 end
